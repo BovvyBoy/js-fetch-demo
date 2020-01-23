@@ -17,5 +17,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     search.addEventListener('input', e => handleSearch(e, memoizedPokemon, container))
     container.addEventListener('click', e => handleClick(e, memoizedPokemon))
-    form.addEventListener('submit', handleSubmit(e, memoizedPokemon, container))
+    form.addEventListener('submit', e => handleSubmit(e, memoizedPokemon, container))
 })

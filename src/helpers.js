@@ -38,6 +38,7 @@ const handleClick = (e, pokemon) => {
 
 const handleSubmit = (e, pokemon, container) => {
     e.preventDefault()
+    console.log("form submitted")
     // e.stopImmediatePropagation()
     const nameInput = e.target.querySelector('#name-input')
     const urlInput = e.target.querySelector('#sprite-input')
@@ -48,7 +49,7 @@ const handleSubmit = (e, pokemon, container) => {
     const headers = {
         'Content-Type': 'application/json'
     }
-    const body = {
+    const data = {
         name, 
         id,
         sprites: {
@@ -56,8 +57,17 @@ const handleSubmit = (e, pokemon, container) => {
             back: sprite
         }
     }
+    const body = JSON.stringify(data)
 
     const opt = { method, headers, body}
 
     fetch(url, opt)
+        .then(res => {
+            console.log(res)
+            return res.json()
+        })
+        .then(json => console.log(json))
+
+    const optimisticHTML = pokemonHTML(data)
+    container.innerHTML += optimisticHTML
 }
