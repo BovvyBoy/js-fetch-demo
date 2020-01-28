@@ -15,7 +15,12 @@ document.addEventListener("DOMContentLoaded", () => {
             container.innerHTML = pokemonArrHTML(json)
         })
 
+    let updateMemoized = (pokeArr) => {
+        console.log(pokeArr)
+        memoizedPokemon = pokeArr
+    }
+
     search.addEventListener('input', e => handleSearch(e, memoizedPokemon, container))
-    container.addEventListener('click', e => handleClick(e, memoizedPokemon))
-    form.addEventListener('submit', handleSubmit(e, memoizedPokemon, container))
+    container.addEventListener('click', e => handleClick(e, memoizedPokemon, container, updateMemoized))
+    form.addEventListener('submit', e => handleSubmit(e, memoizedPokemon, container))
 })

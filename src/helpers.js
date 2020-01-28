@@ -23,7 +23,7 @@ const handleSearch = (e, pokemon, container) => {
     container.innerHTML = pokemonArrHTML(pokeArr)
 }
 
-const handleClick = (e, pokemon) => {
+const handleClick = (e, pokemon, container, updateMemoized) => {
     switch (e.target.dataset.action){
         case "flip":
             const id = parseInt(e.target.dataset.id)
@@ -31,33 +31,55 @@ const handleClick = (e, pokemon) => {
             
             e.target.src = (e.target.src === poke.sprites.front) ? poke.sprites.back : poke.sprites.front
             break
+        case "delete":
+            const pId = e.target.parentNode.querySelector(".pokemon-image img").dataset.id
+            fetch(url + `/${pId}`, {method: "DELETE"})
+                .then(() => {
+                    pokemon = pokemon.filter(poke => poke.id != pId)
+                    container.innerHTML = pokemonArrHTML(pokemon)
+                    updateMemoized(pokemon)
+                })
+            break
         default:
-            console.log('default')
+            console.log("Default action in container")
     }
 }
 
 const handleSubmit = (e, pokemon, container) => {
     e.preventDefault()
-    // e.stopImmediatePropagation()
-    const nameInput = e.target.querySelector('#name-input')
-    const urlInput = e.target.querySelector('#sprite-input')
+    // e.stopPropagation()
+    const nameInput = e.target.querySelector("#name-input")
+    const urlInput = e.target.querySelector("#sprite-input")
     const name = nameInput.value
     const sprite = urlInput.value
     const id = pokemon[pokemon.length - 1].id + 1
+
     const method = 'POST'
     const headers = {
         'Content-Type': 'application/json'
     }
-    const body = {
-        name, 
+    const data = {
+        name,
         id,
         sprites: {
             front: sprite,
             back: sprite
         }
     }
-
-    const opt = { method, headers, body}
-
+    const opt = { method, headers, body: JSON.stringify(data)}
     fetch(url, opt)
+        .then(res => {
+            return res.json()
+        })
+        .then(json => {
+            pokemon.push(json)
+            container.innerHTML = pokemonArrHTML(pokemon)
+        })
+        .catch(err => {
+            console.error(err)
+            container.innerHTML = pokemonArrHTML(pokemon)
+        })
+
+    const optimisticHMTL = pokemonHTML(data)
+    container.innerHTML += optimisticHMTL
 }
